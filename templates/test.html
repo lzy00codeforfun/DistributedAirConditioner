@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>test</title>
+	<script>
+		function hello() {
+			var inputValue = document.getElementById("input").value;
+			window.location.href = "http://127.0.0.1:8000"+inputValue;
+		}
+
+	</script>
+</head>
+<body>
+	<h1 style="background-color: antiquewhite;color:black;">
+		测试接口
+	</h1>
+	<h3> 模拟输入 </h3>
+	<input  style="width:400px;" type="text" id = "input" name="url" value="请输入url"/>
+	<button onclick="hello()">confirm</button>
+	<h3> 接口响应 </h3>
+	<p>
+		{{ test1 }}
+	</p>
+</body>
