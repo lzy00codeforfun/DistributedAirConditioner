@@ -8,7 +8,7 @@
   - outTime：Datetime
   - 说明：进店时插入userId,inTime（outTime NULL），离店时更新outTime
 - RunLog
-  - currenttime：DATETIME
+  - currenttime：DATETIME  （后端生成）
   - userid：CHAR
   - roomid：CHAR
   - temperature：FLOAT
