@@ -1,31 +1,31 @@
-from django.shortcuts import render
 from django.shortcuts import HttpResponse
-from django.shortcuts import redirect
-from Logger import models
-from django.utils.dateparse import parse_date
+from Logger import apps
 import json
 
+def test(request):
+	return render(request, "test.html")
 
 
-
-def controller(request):
+def LoggerRequestParser(request):
 	method = request.GET.get("method", None)
-	if not method:
-		return HttpResponse("params \"method\" must be included.")
+	method_type = request.GET.get("type", None)
 
-	if method == "queryreport":
-		return Logger_queryreport(request)
-	elif method == "insert":
-		return Logger_insert(request)
+	params = ['roomid', 'btime', 'userid','time']
+	processInfo = {}
+	for key in params:
+		processInfo[key] = request.GET.get(key, None)
 
-	#return HttpResponse("Hello, I'm Logger.Controller!")
-	#return render(request, "test.html", {"data":user_list})
+	stat = apps.Statistic(method_type, processInfo)
 
-'''
-rooms: -分隔
-date：报表开始时间 Y-M-D
-type：day/week/month
-'''
+	if method == 'query':
+		return stat.handleStatProcess()
+	elif method == 'print':
+		stat.handleStatProcess()
+		return stat.printStatResult()
+	else:
+		return HttpResponse("Method Not Found.")
+
+
 def Logger_queryreport(request):
 	rooms = request.GET.get("rooms", None).split('-')
 	date  = request.GET.get("date" , None)
@@ -42,19 +42,6 @@ def Logger_queryreport(request):
 
 	return render(request, "test.html", {"test1":reports})
 
-def Logger_insert(request):
-	props = ['userid', 'roomid', 
-			 'temperature', 'windspeed', 'status']
 
-	params = {}
-	for key in props:
-		params[key] = request.GET.get(key, None)
-
-	models.RunLog.objects.create(**params)
-
-	temp = ""
-	for key in props:
-		temp += "{}:{}\n".format(key, params[key])
-	return render(request, "test.html", {"test1":temp})
 
 
