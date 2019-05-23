@@ -1,4 +1,4 @@
-from django.shortcuts import HttpResponse
+from django.shortcuts import HttpResponse,JsonResponse,FileResponse,Http404
 from Logger import apps
 import json
 
@@ -10,37 +10,31 @@ def LoggerRequestParser(request):
 	method = request.GET.get("method", None)
 	method_type = request.GET.get("type", None)
 
-	params = ['roomid', 'btime', 'userid','time']
+	params = ['roomid', 'btime' ,'time']
 	processInfo = {}
 	for key in params:
 		processInfo[key] = request.GET.get(key, None)
 
 	stat = apps.Statistic(method_type, processInfo)
+	ret = {"message":"OK"}
 
 	if method == 'query':
-		return stat.handleStatProcess()
+		stat.handleStatProcess()
+		ret["result"] = stat.__lastStatResult
+		return JsonResponse(ret)
 	elif method == 'print':
 		stat.handleStatProcess()
-		return stat.printStatResult()
+		data = stat.printStatResult()
+		file = open("report.csv", "a+")
+		file.write(data)
+	    response = FileResponse(file)
+	    response['Content-Type'] = 'application/octet-stream'
+	    response['Content-Disposition'] = 'attachment;filename="report.csv"'
+        return response
 	else:
-		return HttpResponse("Method Not Found.")
+		return Http404
 
 
-def Logger_queryreport(request):
-	rooms = request.GET.get("rooms", None).split('-')
-	date  = request.GET.get("date" , None)
-	report_type = request.GET.get("type", None)
-
-	reports = ""
-	if report_type == "day":
-		for room in rooms:
-			room_report = {}
-			data = models.RunLog.objects.filter(currenttime__startswith = date, 
-												roomid = room)
-			for d in data:
-				print(d.__dict__)
-
-	return render(request, "test.html", {"test1":reports})
 
 
 

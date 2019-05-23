@@ -8,5 +8,6 @@ class RunLog(models.Model):
 	temperature = models.FloatField()
 	windspeed = models.IntegerField()
 	status = models.CharField(max_length = 10)
-	userstate = models.CharField(max_length = 10)
+	logtype = models.CharField(max_length = 10)
+	flag = models.CharField(max_length = 10)
 
