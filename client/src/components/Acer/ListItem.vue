@@ -3,7 +3,7 @@
     <v-card-title primary-title>
         <div>      
         <div class="blue--text">
-            <i class="material-icons" style="font-size: 24px;">signal_cellular_alt</i>
+            <i class="material-icons" style="font-size: 24px;position:relative;top:5px;">signal_cellular_alt</i>
             <font size="4"><strong>{{info.nameStr}}</strong></font>
         </div>
         <span class="grey--text">状况良好</span>
