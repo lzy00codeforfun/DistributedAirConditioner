@@ -1,53 +1,34 @@
-# TODO LIST
-
-### 数据库设计+ORM  :heavy_check_mark:
-
-- <del>UserRecord</del> 【optional】​
-  - userId：Char
-  - inTime：Datetime
-  - outTime：Datetime
-  - 说明：进店时插入userId,inTime（outTime NULL），离店时更新outTime
-- RunLog
-  - currenttime：DATETIME  （后端生成）
-  - userid：CHAR
-  - roomid：CHAR
-  - temperature：FLOAT
-  - windspeed：INT
-  - status：INT   （0：关机 1：制冷  -1：制热）
+**to rock** :star:
 
 
 
-### Logger 日志模块
+写日志方式
 
-url:`localhost:/logger/?method=X&....`
+```python
+logger = Logger()
+logger.addLog(dict)
 
-- QueryReport ：查询报表
-
-  - url：`localhost:/logger/?method=query&rooms=XXX&date=XXX&type=XXX`
-
-  - room格式："-"分割
-
-  - date格式：`YY-MM-DD-HH-mm-SS`
-
-  - type格式：“month”or“week”or“day”
-
-  - 返回json格式
-
-    ```json
-    {
-       "roomLength": 1~4,
-        "roomDetails":[
-            {"roomId":X,""}
-        ]
-    }
-    ```
-
-    
+'''
+dict example:
+{'roomid':XXX,
+ 'temperature':XXX,
+ 'windspeed':XXX,
+ 'status':XXX,
+ 'logtype':XXX,
+ 'flag':XXX}
+'''
+```
 
 
 
-### Statistic 统计（计费）模块
+关于写日志的一些说明：
 
-- 临时费用公式：$\sum_{each second} (50+status*temperature*windspeed)*0.1$
-- 
+- logtype分为“LOG_DISPATCH”和“LOG_OTHER”，前者只包括调度开关机、调风调温、出调度队列5种情况，后者包括用户到店、用户离店
 
+
+
+- status（仅针对LOG_DISPATCH）： ON表示开机/OFF表示关机/HOT制热/COLD制冷/OUT调度出列
+
+
+
+- flag（仅针对LOG_OTHER）:check_in表示进店/check_out表示离店

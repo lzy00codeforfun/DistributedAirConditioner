@@ -147,6 +147,8 @@ class Statistic():
 						result['fee'] += self.__calFee(last, (dt - last_dt).seconds)
 			self.__lastStatResult = result
 
+		return self.__lastStatResult
+
 
 		elif self.__statProcessType == 'record':
 			logger = Logger()
