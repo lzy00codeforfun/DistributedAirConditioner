@@ -11,6 +11,13 @@ import json
 #    name = 'Logger'
 
 
+def printInfo(xx):
+	print("_________"*5)
+	for x in xx:
+		print(x)
+		print("\n")
+	print("_________"*5)
+
 class Statistic():
 	__statProcessType = None
 	__inputInfo = None
@@ -27,6 +34,7 @@ class Statistic():
 		if processType in ['day','week','month','year']:
 			data = models.RunLog.objects.filter(roomid = processInfo['roomid'])
 			self.__handleInfo = [x.__dict__ for x in data]
+			#printInfo(self.__handleInfo)
 
 		elif processType == 'invoice' or processType == 'record':
 			data = models.RunLog.objects.filter(roomid = processInfo['roomid'])
@@ -38,12 +46,7 @@ class Statistic():
 				if temp['logtype'] == 'LOG_OTHER' and temp['flag'] == 'check_in':
 					break
 			self.__handleInfo = self.__handleInfo[::-1]
-			print("_________"*5)
-			for x in self.__handleInfo:
-				print(x)
-				print("\n")
-			#print(self.__handleInfo)
-			print("_________"*5)
+
 		else:
 			pass
 
@@ -58,19 +61,25 @@ class Statistic():
 			      'service_time': 0, 'fee': 0, 'dispatch_times':0, 'rdr_number': 0,
 			      'change_temp_times': 0, 'change_speed_times': 0}
 		
-		left = False; right = False;
+		left = -1; right = -1;
 		for i, row in enumerate(self.__handleInfo):
 			dt = datetime.datetime.strptime(str(row['currenttime']).split(".")[0],"%Y-%m-%d %H:%M:%S")
 			if dt >= base and dt <= end:
-				if not left:
+				if left == -1:
 					left = i
-					right = True
+					right = -2
 			else:
-				if right:
+				if right == -2:
 					right = i
-		if left == False or right == False:
+		if right == -2:
+			right = len(self.__handleInfo)
+		if left == -1 or right == -1:
 			return report
-		last = self.__handleInfo[left - 1]
+		print(left,right)
+		if left != 0 :
+			last = self.__handleInfo[left - 1]
+		else:
+			last = None
 		for i in range(left, right):
 			row = self.__handleInfo[i]
 			dt = datetime.datetime.strptime(str(row['currenttime']).split(".")[0],"%Y-%m-%d %H:%M:%S")
@@ -90,7 +99,6 @@ class Statistic():
 						report['service_time'] += (dt - last_dt).seconds
 					if last['status'] != 'OFF' and last['status'] != 'OUT':
 						report['fee'] += self.__calFee(last, (dt - last_dt).seconds)
-				last = row
 				report['dispatch_times'] += 1
 				if row['flag'] == "changewind":
 					report['change_speed_times'] += 1
@@ -101,6 +109,7 @@ class Statistic():
 			elif row['logtype'] == "LOG_OTHER":
 				if row['flag'] == 'record':
 					report['rdr_number'] += 1
+			last = row
 
 		return report
 
@@ -159,7 +168,7 @@ class Statistic():
 
 		elif self.__statProcessType == 'record':
 			logger = Logger()
-			logger.addLog({'roomid': self.__inputInfo['roomid'], 'temperature':0, 'windspeed':0, 'status':"OFF", "logtype":"LOG_TYPE", "flag":"record"})
+			logger.addLog({'roomid': self.__inputInfo['roomid'], 'temperature':0, 'windspeed':0, 'status':"OFF", "logtype":"LOG_OTHER", "flag":"record"})
 
 			templete = {"roomid":self.__inputInfo['roomid'], 'start_time':0, "end_time":0, "speed":0, "target_temper":0, "fee":0, "fee_rate":0}
 			last = None
@@ -206,7 +215,7 @@ class Statistic():
 			formatData += "btime, etime, speed, target, fee_rate, fee\n"
 			for row in self.__lastStatResult:
 				formatData += ",".join([str(row[k]) for k in row.keys()]) + '\n'
-
+		
 		return formatData
 
 class Logger():

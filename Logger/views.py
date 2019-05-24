@@ -6,7 +6,7 @@ from django.shortcuts import render
 from Logger import models
 
 def test(request):
-	logInfo = {'roomid':'309c', 'temperature':25, 'windspeed':2, 'status':"HOT", 'logtype':'LOG_OTHER', 'flag':"check_out"}
+	logInfo = {'roomid':'309c', 'temperature':25, 'windspeed':2, 'status':"OFF", 'logtype':'LOG_OTHER', 'flag':"check_out"}
 	models.RunLog.objects.create(**logInfo)
 	return render(request, "test.html")
 
@@ -31,10 +31,14 @@ def LoggerPrintReport(request):
 
 	stat.handleStatProcess()
 	data = stat.printStatResult()
-	file = open("report.csv", "a+") 
+
+	file = open("report.csv", "w") 
 	file.write(data)
+	file.close()
+
+	file = open("report.csv","rb")
 	response = FileResponse(file)
-	response['Content-Type'] = 'application/octet-stream'
+	response['Content-Type'] = 'text/csv'
 	response['Content-Disposition'] = 'attachment;filename="report.csv"'
 
 	return response
@@ -57,7 +61,7 @@ def LoggerPrintInvoice(request):
 	file = open("invoice.csv", "a+")
 	file.write(data)
 	response = FileResponse(file)
-	response['Content-Type'] = 'application/octet-stream'
+	response['Content-Type'] = 'text/csv'
 	response['Content-Disposition'] = 'attachment;filename="invoice.csv"'
 
 	return response
@@ -81,12 +85,10 @@ def LoggerPrintRdr(request):
 	file = open("record.csv", "a+")
 	file.write(data)
 	response = FileResponse(file)
-	response['Content-Type'] = 'application/octet-stream'
+	response['Content-Type'] = 'text/csv'
 	response['Content-Disposition'] = 'attachment;filename="record.csv"'
 
 	return response
-
-
 
 
 

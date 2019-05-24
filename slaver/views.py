@@ -11,7 +11,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.core.serializers import serialize
 import json
 from Logger.apps import Logger
-logger = Logger
+logger = Logger()
 class RoomStatusLazyEncoder(DjangoJSONEncoder):
     def default(self, obj):
         if isinstance(obj, RoomStatusDao):
@@ -54,7 +54,7 @@ def GetNowTime():
 def Log( room_id, temper, speed, status, log_type, flag):
     global logger
     dict = {}
-    dict["room_id"] = room_id
+    dict["roomid"] = room_id
     dict['temperature'] = temper
     dict['windspeed'] = speed
     dict['status'] = status
@@ -69,10 +69,10 @@ def RequestUpdateTemper(request):
         room.save()
         if room.mode == 0:
             Log(room.room_id, room.target_temper, room.speed, "COLD",
-                     "LOG_DISPATCH", 0)
+                     "LOG_DISPATCH", "Change_Temper")
         else:
             Log(room.room_id, room.target_temper, room.speed, "HOT",
-                     "LOG_DISPATCH", 0)
+                     "LOG_DISPATCH", "Change_Temper")
         #Log()  温度改变
     else:
         roomlist = RoomStatusDao.objects.filter(status=RoomStatus["serving"]).order_by("speed","time")
@@ -83,10 +83,10 @@ def RequestUpdateTemper(request):
             room.save()
             if room.mode == 0:
                 Log(room.room_id, room.target_temper, room.speed, "COLD",
-                    "LOG_DISPATCH", 0)
+                    "LOG_DISPATCH", "Start_Serving")
             else:
                 Log(room.room_id, room.target_temper, room.speed, "HOT",
-                    "LOG_DISPATCH", 0)
+                    "LOG_DISPATCH", "Start_Serving")
             #Log()
         else:
             if roomlist[0].speed < int(room.speed):
@@ -95,10 +95,10 @@ def RequestUpdateTemper(request):
                 room.save()
                 if room.mode == 0:
                     Log(room.room_id, room.target_temper, room.speed, "COLD",
-                        "LOG_DISPATCH", 0)
+                        "LOG_DISPATCH", "Start_Serving")
                 else:
                     Log(room.room_id, room.target_temper, room.speed, "HOT",
-                        "LOG_DISPATCH", 0)
+                        "LOG_DISPATCH", "Start_Serving")
                 #Log()
                 roomlist[0].status = RoomStatus["waiting"]
                 roomlist[0].service_time += time.time()-roomlist[0].time
@@ -128,10 +128,10 @@ def RequestUpdateSpeed(request):
         room.save()
         if room.mode == 0:
             Log(room.room_id, room.target_temper, room.speed, "COLD",
-                "LOG_DISPATCH", 0)
+                "LOG_DISPATCH", "Change_Speed")
         else:
             Log(room.room_id, room.target_temper, room.speed, "HOT",
-                "LOG_DISPATCH", 0)
+                "LOG_DISPATCH","Change_Speed")
         #Log()
     else:
         roomlist = RoomStatusDao.objects.filter(status=RoomStatus["serving"]).order_by("speed","time")
@@ -142,10 +142,10 @@ def RequestUpdateSpeed(request):
             room.save()
             if room.mode == 0:
                 Log(room.room_id, room.target_temper, room.speed, "COLD",
-                    "LOG_DISPATCH", 0)
+                    "LOG_DISPATCH", "Start_Serving")
             else:
                 Log(room.room_id, room.target_temper, room.speed, "HOT",
-                    "LOG_DISPATCH", 0)
+                    "LOG_DISPATCH", "Start_Serving")
             #Log()
         else:
             if roomlist[0].speed < int(room.speed):
@@ -154,10 +154,10 @@ def RequestUpdateSpeed(request):
                 room.save()
                 if room.mode == 0:
                     Log(room.room_id, room.target_temper, room.speed, "COLD",
-                        "LOG_DISPATCH", 0)
+                        "LOG_DISPATCH", "Start_Serving")
                 else:
                     Log(room.room_id, room.target_temper, room.speed, "HOT",
-                        "LOG_DISPATCH", 0)
+                        "LOG_DISPATCH", "Start_Serving")
                 #Log()
                 roomlist[0].status = RoomStatus["waiting"]
                 roomlist[0].service_time += time.time()-roomlist[0].time
@@ -181,50 +181,101 @@ def RequestOpen(request):
     global RoomStatus
     room = RoomStatusDao.objects.get(room_id = request.GET.get("room_id"))
     settings = get_default()
-    # room.status = RoomStatus["waiting"]
-    room.target_temper = settings["default_temper"]
-    room.speed = settings["default_speed"]
-    room.mode = settings["mode"]
-    room.current_temper = request.GET.get("current_temper")
-    room.save()
-    # Log() 请求开机
-    Log(room.room_id, room.target_temper, room.speed, "ON", "LOG_DISPATCH", 0)
-    roomlist = RoomStatusDao.objects.filter(status=RoomStatus["serving"]).order_by("-speed").order_by(
-        "time")
-    count = len(roomlist)
-    if count < 3:
-        room.status = RoomStatus["serving"]
-        room.time = GetNowTime()
+    if room.status == RoomStatus["registed"]:
+
+
+        # room.status = RoomStatus["waiting"]
+        room.target_temper = settings["default_temper"]
+        room.speed = settings["default_speed"]
+        room.mode = settings["mode"]
+        room.current_temper = request.GET.get("current_temper")
         room.save()
-        if room.mode == 0:
-            Log(room.room_id, room.target_temper, room.speed, "COLD",
-                "LOG_DISPATCH", 0)
-        else:
-            Log(room.room_id, room.target_temper, room.speed, "HOT",
-                "LOG_DISPATCH", 0)
-        #Log()
-    else:
-        if roomlist[0].speed < int(room.speed):
+        # Log() 请求开机
+        Log(room.room_id, room.target_temper, room.speed, "ON", "LOG_DISPATCH", 0)
+        roomlist = RoomStatusDao.objects.filter(status=RoomStatus["serving"]).order_by("speed","time")
+        count = len(roomlist)
+        if count < 3:
             room.status = RoomStatus["serving"]
             room.time = GetNowTime()
             room.save()
             if room.mode == 0:
                 Log(room.room_id, room.target_temper, room.speed, "COLD",
-                    "LOG_DISPATCH", 0)
+                    "LOG_DISPATCH", "Start_Serving")
             else:
                 Log(room.room_id, room.target_temper, room.speed, "HOT",
-                    "LOG_DISPATCH", 0)
-            #Log() # dispatch log
-            roomlist[0].status = RoomStatus["waiting"]
-            roomlist[0].service_time += time.time() - roomlist[count-1].time
-            roomlist[0].time = GetNowTime()
-            roomlist[0].save()
-            Log(roomlist[0].room_id, roomlist[0].target_temper, roomlist[0].speed, "OUT", "LOG_DISPATCH", 0)
+                    "LOG_DISPATCH", "Start_Serving")
             #Log()
         else:
-            room.status = RoomStatus["waiting"]
+            if roomlist[0].speed < int(room.speed):
+                room.status = RoomStatus["serving"]
+                room.time = GetNowTime()
+                room.save()
+                if room.mode == 0:
+                    Log(room.room_id, room.target_temper, room.speed, "COLD",
+                        "LOG_DISPATCH", "Start_Serving")
+                else:
+                    Log(room.room_id, room.target_temper, room.speed, "HOT",
+                        "LOG_DISPATCH", "Start_Serving")
+                #Log() # dispatch log
+                roomlist[0].status = RoomStatus["waiting"]
+                roomlist[0].service_time += time.time() - roomlist[count-1].time
+                roomlist[0].time = GetNowTime()
+                roomlist[0].save()
+                Log(roomlist[0].room_id, roomlist[0].target_temper, roomlist[0].speed, "OUT", "LOG_DISPATCH", 0)
+                #Log()
+            else:
+                room.status = RoomStatus["waiting"]
+                room.time = GetNowTime()
+                room.save()
+    elif room.status ==RoomStatus["done"]:
+        room.current_temper = request.GET.get("current_temper")
+        room.save()
+        roomlist = RoomStatusDao.objects.filter(status=RoomStatus["serving"]).order_by("speed","time")
+        count = len(roomlist)
+        if count < 3:
+            room.status = RoomStatus["serving"]
             room.time = GetNowTime()
             room.save()
+            if room.mode == 0:
+                Log(room.room_id, room.target_temper, room.speed, "COLD",
+                    "LOG_DISPATCH", "Start_Serving")
+            else:
+                Log(room.room_id, room.target_temper, room.speed, "HOT",
+                    "LOG_DISPATCH", "Start_Serving")
+            # Log()
+        else:
+            if roomlist[0].speed < int(room.speed):
+                room.status = RoomStatus["serving"]
+                room.time = GetNowTime()
+                room.save()
+                if room.mode == 0:
+                    Log(room.room_id, room.target_temper, room.speed, "COLD",
+                        "LOG_DISPATCH", "Start_Serving")
+                else:
+                    Log(room.room_id, room.target_temper, room.speed, "HOT",
+                        "LOG_DISPATCH", "Start_Serving")
+                # Log() # dispatch log
+                roomlist[0].status = RoomStatus["waiting"]
+                roomlist[0].service_time += time.time() - roomlist[0].time
+                roomlist[0].time = GetNowTime()
+                roomlist[0].save()
+                Log(roomlist[0].room_id, roomlist[0].target_temper, roomlist[0].speed, "OUT", "LOG_DISPATCH", 0)
+                # Log()
+            else:
+                room.status = RoomStatus["waiting"]
+                room.time = GetNowTime()
+                room.save()
+    elif room.status == RoomStatus["unregister"]:
+        dict ={}
+        dict["message"]="Failed"
+        dict["result"]=None
+        return HttpResponse(content=json.dumps(dict), content_type="application/json")
+    else:
+        dict ={}
+        dict["message"]="Already open now"
+        dict["result"]=None
+        return HttpResponse(content=json.dumps(dict), content_type="application/json")
+
     ret = serialize('json', RoomStatusDao.objects.filter(room_id = request.GET.get("room_id")), cls=RoomStatusLazyEncoder)
     #print(ret)
     ret = getFieldJson_single_room(ret)
@@ -266,12 +317,15 @@ def ChechIn(request):
     room_id = request.GET.get("room_id")
     dict["message"] = "OK"
     dict["result"] = None
+    Log(room_id, None, None, None, "LOG_OTHER", "check_in")
     ret = json.dumps(dict)
     return HttpResponse(content=ret, content_type="application/json")
 
 def CheckOut(request):
+    room_id = request.GET.get("room_id")
     dict = {}
     dict["message"] = "OK"
     dict["result"] = None
     ret = json.dumps(dict)
+    Log(room_id, None, None, None, "LOG_OTHER", "check_out")
     return HttpResponse(content=ret, content_type="application/json")

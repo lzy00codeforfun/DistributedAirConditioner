@@ -65,7 +65,7 @@ class MainMachine:
 
     def Log(self,room_id,temper,speed,status,log_type,flag):
         dict = {}
-        dict["room_id"]=room_id
+        dict["roomid"]=room_id
         dict['temperature']=temper
         dict['windspeed']=speed
         dict['status']=status
@@ -98,9 +98,9 @@ class MainMachine:
                 WaitingRoom[0].current_temper -= 0.005#dropTemper()
                 WaitingRoom[0].time=time.time()
                 if WaitingRoom[0].mode == 0:
-                    self.Log(room.room_id, room.target_temper, room.speed, "COLD", "LOG_DISPATCH", 0)
+                    self.Log(room.room_id, room.target_temper, room.speed, "COLD", "LOG_DISPATCH", "Start_Serving")
                 else:
-                    self.Log(room.room_id, room.target_temper, room.speed, "HOT", "LOG_DISPATCH", 0)
+                    self.Log(room.room_id, room.target_temper, room.speed, "HOT", "LOG_DISPATCH", "Start_Serving")
                 #Log()
                 WaitingRoom[0].save()
         return
@@ -118,9 +118,9 @@ class MainMachine:
                 WaitingRoom[0].current_temper -= 0.005
                 WaitingRoom[0].save()
                 if WaitingRoom[0].mode == 0:
-                    self.Log(WaitingRoom[0].room_id, WaitingRoom[0].target_temper,WaitingRoom[0].speed, "COLD", "LOG_DISPATCH", 0)
+                    self.Log(WaitingRoom[0].room_id, WaitingRoom[0].target_temper,WaitingRoom[0].speed, "COLD", "LOG_DISPATCH", "Start_Serving")
                 else:
-                    self.Log(WaitingRoom[0].room_id, WaitingRoom[0].target_temper, WaitingRoom[0].speed, "HOT", "LOG_DISPATCH", 0)
+                    self.Log(WaitingRoom[0].room_id, WaitingRoom[0].target_temper, WaitingRoom[0].speed, "HOT", "LOG_DISPATCH", "Start_Serving")
                 #Log()
             elif int(RunningRoom[0].speed)< int(WaitingRoom[0].speed) or ( int(RunningRoom[0].speed)== int(WaitingRoom[0].speed) and (time.time()-float(WaitingRoom[0].time))>120  ):
                 RunningRoom[0].status = RoomStatus["waiting"]
@@ -134,9 +134,9 @@ class MainMachine:
                 WaitingRoom[0].current_temper -= 0.005
                 WaitingRoom[0].save()
                 if WaitingRoom[0].mode == 0:
-                    self.Log(WaitingRoom[0].room_id, WaitingRoom[0].target_temper,WaitingRoom[0].speed, "COLD", "LOG_DISPATCH", 0)
+                    self.Log(WaitingRoom[0].room_id, WaitingRoom[0].target_temper,WaitingRoom[0].speed, "COLD", "LOG_DISPATCH", "Start_Serving")
                 else:
-                    self.Log(WaitingRoom[0].room_id, WaitingRoom[0].target_temper, WaitingRoom[0].speed, "HOT", "LOG_DISPATCH", 0)
+                    self.Log(WaitingRoom[0].room_id, WaitingRoom[0].target_temper, WaitingRoom[0].speed, "HOT", "LOG_DISPATCH", "Start_Serving")
                 #Log()
         return
 
