@@ -31,8 +31,10 @@ def LoggerPrintReport(request):
 
 	stat.handleStatProcess()
 	data = stat.printStatResult()
-	file = open("report.csv", "a+") 
+	file = open("report.csv", "w") 
 	file.write(data)
+	file.close()
+	file = open("report.csv","rb")
 	response = FileResponse(file)
 	response['Content-Type'] = 'application/octet-stream'
 	response['Content-Disposition'] = 'attachment;filename="report.csv"'
