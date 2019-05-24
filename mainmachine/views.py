@@ -3,7 +3,9 @@ from django.http import HttpResponse
 from .models import Request,RoomStatusDao
 import threading
 import time
-#from ..log.models import Log
+import sys
+sys.path.append("..")
+from Logger.apps import Logger
 MainStatus = {"open":1,"init_param":2,"run":3,"close":4}
 RoomStatus = {"unregister":1,"registed":2,"waiting":"3","serving":4,"done":5}
 RoomIdListSetting = ("309c","310c","311c","312c","fc")
@@ -59,22 +61,29 @@ class MainMachine:
         self.default_mode = None
         self.cur_run = 0
         self.simulator = None
+        self.logger = Logger()
 
+    def Log(self,room_id,temper,speed,status,log_type,flag):
+        dict = {}
+        dict["room_id"]=room_id
+        dict['temperature']=temper
+        dict['windspeed']=speed
+        dict['status']=status
+        dict['logtype']=log_type
+        dict['flag']=flag
+        self.logger.addLog(dict)
 
     def ServingRoom(self):      # 更新当秒的温度,控制到达温度的空调进入等待
 
         RunningRoom = RoomStatusDao.objects.filter(status=4)
         count = 0
         for room in RunningRoom:
-            # 此段修改日志可以不使用，可以在request的时候直接创建log
-            # if room.is_log == True:
-            #     Log()
-            #     room.is_log = False
             if room.target_temper > room.current_temper:
                 room.status = RoomStatus["done"]
                 room.service_time += time.time()-room.time
                 room.time = time.time()
                 room.fee_rate = 0
+                self.Log(room.room_id,room.target_temper,room.speed,"OUT","LOG_DISPATCH",0)
                 #Log()           # 停止服务的log
                 #StartTemperMonitor()
                 room.save()
@@ -88,6 +97,10 @@ class MainMachine:
                 WaitingRoom[0].status = 4
                 WaitingRoom[0].current_temper -= 0.005#dropTemper()
                 WaitingRoom[0].time=time.time()
+                if WaitingRoom[0].mode == 0:
+                    self.Log(room.room_id, room.target_temper, room.speed, "COLD", "LOG_DISPATCH", 0)
+                else:
+                    self.Log(room.room_id, room.target_temper, room.speed, "HOT", "LOG_DISPATCH", 0)
                 #Log()
                 WaitingRoom[0].save()
         return
@@ -97,24 +110,33 @@ class MainMachine:
         WaitingRoom = RoomStatusDao.objects.filter(status=3).order_by("speed")
         cnt_wait = len(WaitingRoom)
         if cnt_wait != 0:
-            RunningRoom = RoomStatusDao.objects.filter(status=4).order_by("-speed").order_by("time")
+            RunningRoom = RoomStatusDao.objects.filter(status=4).order_by("speed","time")
             count = len(RunningRoom)
             if count <3:
                 WaitingRoom[0].status = RoomStatus["serving"]
                 WaitingRoom[0].time = time.time()
                 WaitingRoom[0].current_temper -= 0.005
                 WaitingRoom[0].save()
+                if WaitingRoom[0].mode == 0:
+                    self.Log(WaitingRoom[0].room_id, WaitingRoom[0].target_temper,WaitingRoom[0].speed, "COLD", "LOG_DISPATCH", 0)
+                else:
+                    self.Log(WaitingRoom[0].room_id, WaitingRoom[0].target_temper, WaitingRoom[0].speed, "HOT", "LOG_DISPATCH", 0)
                 #Log()
             elif int(RunningRoom[0].speed)< int(WaitingRoom[0].speed) or ( int(RunningRoom[0].speed)== int(WaitingRoom[0].speed) and (time.time()-float(WaitingRoom[0].time))>120  ):
                 RunningRoom[0].status = RoomStatus["waiting"]
                 RunningRoom[0].service_time += time.time()-RunningRoom[0].time
                 RunningRoom[0].time = time.time()
                 RunningRoom[0].save()
+                self.Log(RunningRoom[0].room_id, RunningRoom[0].target_temper, RunningRoom[0].speed, "OUT", "LOG_DISPATCH", 0)
                 #Log()
                 WaitingRoom[0].status = RoomStatus["serving"]
                 WaitingRoom[0].time = time.time()
                 WaitingRoom[0].current_temper -= 0.005
                 WaitingRoom[0].save()
+                if WaitingRoom[0].mode == 0:
+                    self.Log(WaitingRoom[0].room_id, WaitingRoom[0].target_temper,WaitingRoom[0].speed, "COLD", "LOG_DISPATCH", 0)
+                else:
+                    self.Log(WaitingRoom[0].room_id, WaitingRoom[0].target_temper, WaitingRoom[0].speed, "HOT", "LOG_DISPATCH", 0)
                 #Log()
         return
 

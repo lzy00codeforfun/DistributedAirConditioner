@@ -32,6 +32,7 @@ ALLOWED_HOSTS = ["*"]
 # Application definition
 
 INSTALLED_APPS = [
+    'Logger',
     'rest_framework',
     'mainmachine.apps.MainmachineConfig',
     'slaver.apps.SlaverConfig',

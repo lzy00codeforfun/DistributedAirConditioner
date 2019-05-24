@@ -45,7 +45,7 @@ class RoomStatusDao(models.Model):
     def create(cls,**kwargs):
         global RoomStatus
         room = cls(room_id=kwargs["room_id"], status=RoomStatus['registed'], target_temper=None, current_temper=None,
-                   speed=None, fee=None, fee_rate = None,service_time=None, time=None)
+                   speed=None, fee=0.0, fee_rate = 0.0,service_time=0.0, time=None)
         return room
     class Meta:
         db_table = "Room"
