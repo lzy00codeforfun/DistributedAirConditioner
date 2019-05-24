@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import path
 from Logger import views as logger_views
-from Statistic import views as statistic_views 
+
 
 
 

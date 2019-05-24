@@ -1,12 +1,17 @@
-from django.shortcuts import HttpResponse,JsonResponse,FileResponse,Http404
+from django.shortcuts import HttpResponse
+from django.http import JsonResponse,FileResponse,Http404
 from Logger import apps
 import json
+from django.shortcuts import render
+from Logger import models
 
 def test(request):
+	logInfo = {'roomid':'309c', 'temperature':25, 'windspeed':2, 'status':"HOT", 'logtype':'LOG_OTHER', 'flag':"check_out"}
+	models.RunLog.objects.create(**logInfo)
 	return render(request, "test.html")
 
 def LoggerQueryReport(request):
-	qtype = request.GET.get("qtype", None)
+	qtype = request.GET.get("qtype", None)  
 	roomid = request.GET.get("room_id", None)
 	date = request.GET.get("date", None)
 
@@ -26,7 +31,7 @@ def LoggerPrintReport(request):
 
 	stat.handleStatProcess()
 	data = stat.printStatResult()
-	file = open("report.csv", "a+")
+	file = open("report.csv", "a+") 
 	file.write(data)
 	response = FileResponse(file)
 	response['Content-Type'] = 'application/octet-stream'
@@ -67,8 +72,7 @@ def LoggerQueryRdr(request):
 	return JsonResponse(ret)
 
 
-
-def LoggerPrintInvoice(request):
+def LoggerPrintRdr(request):
 	roomid = request.GET.get('room_id', None)
 	stat = apps.Statistic("record", {'roomid':roomid})
 
