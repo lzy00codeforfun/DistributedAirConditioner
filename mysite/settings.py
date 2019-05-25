@@ -36,7 +36,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'mainmachine.apps.MainmachineConfig',
     'slaver.apps.SlaverConfig',
-    'polls.apps.PollsConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -82,10 +81,10 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'testdjango',
+        'NAME': 'AirConditioner',
         'USER':"root",
         'PASSWORD':'123456',
-        'HOST':'47.10097.152.',
+        'HOST':'47.100.97.152',
         'PORT':'3306'   # origin 3306
     }
 }
