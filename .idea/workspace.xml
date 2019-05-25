@@ -112,8 +112,8 @@
       <find>poll</find>
       <find>object.</find>
       <find>order_by(&quot;speed&quot;,reverse=True)</find>
-      <find>order_by(&quot;speed&quot;, reverse=True)</find>
-      <find>&lt; room.speed:</find>
+      <find />
+      <find />
       <find>allow</find>
       <find>allo</find>
       <find>WaitingRoom[0]</find>
@@ -125,7 +125,7 @@
       <replace>request.GET.get</replace>
       <replace>objects.</replace>
       <replace>order_by(&quot;-speed&quot;)</replace>
-      <replace>&lt; int(room.speed):</replace>
+      <replace />
       <replace>room</replace>
       <replace>order_by(&quot;speed&quot;,&quot;time&quot;)</replace>
     </replaceStrings>
@@ -208,7 +208,7 @@
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="last_opened_file_path" value="D:/django_project/mysite" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RunDashboard">
