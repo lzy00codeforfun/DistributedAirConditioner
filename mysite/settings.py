@@ -86,7 +86,7 @@ DATABASES = {
         'USER':"root",
         'PASSWORD':'123456',
         'HOST':'47.10097.152.',
-        'PORT':'8000'   # origin 3306
+        'PORT':'3306'   # origin 3306
     }
 }
 
