@@ -85,8 +85,8 @@ DATABASES = {
         'NAME': 'testdjango',
         'USER':"root",
         'PASSWORD':'123456',
-        'HOST':'127.0.0.1',
-        'PORT':'3306'
+        'HOST':'47.10097.152.',
+        'PORT':'8000'   # origin 3306
     }
 }
 
