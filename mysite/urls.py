@@ -20,7 +20,7 @@ from Logger import views as logger_views
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("main_machine/",include('mainmachine.urls')),
-    path("slaver/",include('slaver.urls')),
+    path("slave/",include('slaver.urls')),
     path('logger/query_report', logger_views.LoggerQueryReport),
     path('logger/print_report', logger_views.LoggerPrintReport),
     path('logger/query_invoice', logger_views.LoggerQueryInvoice),

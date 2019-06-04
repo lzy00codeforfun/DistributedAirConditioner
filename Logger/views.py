@@ -1,14 +1,19 @@
 from django.shortcuts import HttpResponse
 from django.http import JsonResponse,FileResponse,Http404
 from Logger import apps
+from django.utils.http import urlquote
 import json
 from django.shortcuts import render
 from Logger import models
 
 def test(request):
-	logInfo = {'roomid':'309c', 'temperature':25, 'windspeed':2, 'status':"OFF", 'logtype':'LOG_OTHER', 'flag':"check_out"}
+	p = ['roomid','temperature','windspeed','status','logtype','flag']
+	logInfo = {}
+	for k in p:
+		logInfo[k] = request.GET.get(k, None)
+	#logInfo = {'roomid':'309c', 'temperature':25, 'windspeed':2, 'status':"HOT", 'logtype':'LOG_OTHER', 'flag':"check_out"}
 	models.RunLog.objects.create(**logInfo)
-	return render(request, "test.html")
+	return JsonResponse(logInfo)
 
 def LoggerQueryReport(request):
 	qtype = request.GET.get("qtype", None)  
@@ -30,16 +35,11 @@ def LoggerPrintReport(request):
 	stat = apps.Statistic(qtype, {'roomid':roomid, 'btime':date})
 
 	stat.handleStatProcess()
-	data = stat.printStatResult()
+	filename = stat.printStatResult()
 
-	file = open("report.csv", "w") 
-	file.write(data)
-	file.close()
-
-	file = open("report.csv","rb")
+	file = open("downloads/"+filename, "rb")
 	response = FileResponse(file)
-	response['Content-Type'] = 'text/csv'
-	response['Content-Disposition'] = 'attachment;filename="report.csv"'
+	response['Content-Disposition'] = 'attachment;filename="{}"'.format(urlquote(filename))
 
 	return response
 
@@ -56,15 +56,15 @@ def LoggerPrintInvoice(request):
 	roomid = request.GET.get('room_id', None)
 	stat = apps.Statistic("invoice", {'roomid':roomid})
 
-	stat.handleStatProcess()
-	data = stat.printStatResult()
-	file = open("invoice.csv", "a+")
-	file.write(data)
+	stat.handleStatProcess("print")
+	filename = stat.printStatResult()
+
+	file = open("downloads/"+filename, "rb")
 	response = FileResponse(file)
-	response['Content-Type'] = 'text/csv'
-	response['Content-Disposition'] = 'attachment;filename="invoice.csv"'
+	response['Content-Disposition'] = 'attachment;filename="{}"'.format(urlquote(filename))
 
 	return response
+
 
 def LoggerQueryRdr(request):
 	roomid = request.GET.get('room_id', None)
@@ -81,14 +81,15 @@ def LoggerPrintRdr(request):
 	stat = apps.Statistic("record", {'roomid':roomid})
 
 	stat.handleStatProcess()
-	data = stat.printStatResult()
-	file = open("record.csv", "a+")
-	file.write(data)
+	filename = stat.printStatResult()
+
+	file = open("downloads/"+filename, "rb")
 	response = FileResponse(file)
-	response['Content-Type'] = 'text/csv'
-	response['Content-Disposition'] = 'attachment;filename="record.csv"'
+	response['Content-Disposition'] = 'attachment;filename="{}"'.format(urlquote(filename))
 
 	return response
+
+
 
 
 
