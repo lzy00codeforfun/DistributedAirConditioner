@@ -1,0 +1,57 @@
+-- MySQL dump 10.13  Distrib 5.6.44, for Linux (x86_64)
+--
+-- Host: localhost    Database: AirConditioner
+-- ------------------------------------------------------
+-- Server version	5.6.44
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `Logger_runlog`
+--
+
+DROP TABLE IF EXISTS `Logger_runlog`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Logger_runlog` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `currenttime` datetime(6) NOT NULL,
+  `roomid` varchar(20) NOT NULL,
+  `temperature` double NOT NULL,
+  `windspeed` int(11) NOT NULL,
+  `status` varchar(20) NOT NULL,
+  `logtype` varchar(20) NOT NULL,
+  `flag` varchar(30) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1134 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `Logger_runlog`
+--
+
+LOCK TABLES `Logger_runlog` WRITE;
+/*!40000 ALTER TABLE `Logger_runlog` DISABLE KEYS */;
+INSERT INTO `Logger_runlog` VALUES (1094,'2019-06-04 19:40:18.099421','310c',-1,-1,'None','LOG_OTHER','check_in'),(1095,'2019-06-04 19:40:18.820410','311c',-1,-1,'None','LOG_OTHER','check_in'),(1096,'2019-06-04 19:40:52.455361','309c',-1,-1,'None','LOG_OTHER','check_in'),(1097,'2019-06-04 19:40:59.625701','312c',-1,-1,'None','LOG_OTHER','check_in'),(1098,'2019-06-04 19:42:07.643744','309c',24,1,'None','LOG_OTHER','request_on'),(1099,'2019-06-04 19:42:07.653843','309c',24,1,'COLD','LOG_DISPATCH','dispatch_on'),(1100,'2019-06-04 19:43:02.478357','309c',23,1,'COLD','LOG_DISPATCH','change_status'),(1101,'2019-06-04 19:43:02.927488','309c',22,1,'COLD','LOG_DISPATCH','change_status'),(1102,'2019-06-04 19:43:02.991426','310c',24,1,'None','LOG_OTHER','request_on'),(1103,'2019-06-04 19:43:02.998245','310c',24,1,'COLD','LOG_DISPATCH','dispatch_on'),(1104,'2019-06-04 19:43:03.386760','309c',21,1,'COLD','LOG_DISPATCH','change_status'),(1105,'2019-06-04 19:43:03.879405','309c',20,1,'COLD','LOG_DISPATCH','change_status'),(1106,'2019-06-04 19:44:08.233539','311c',24,1,'None','LOG_OTHER','request_on'),(1107,'2019-06-04 19:45:05.696753','312c',24,1,'None','LOG_OTHER','request_on'),(1108,'2019-06-04 19:45:09.718148','310c',23,1,'COLD','LOG_DISPATCH','change_status'),(1109,'2019-06-04 19:45:10.016960','310c',22,1,'COLD','LOG_DISPATCH','change_status'),(1110,'2019-06-04 19:45:10.285077','310c',21,1,'COLD','LOG_DISPATCH','change_status'),(1111,'2019-06-04 19:45:10.643961','310c',21,1,'COLD','LOG_DISPATCH','change_status'),(1112,'2019-06-04 19:45:11.144439','310c',20,1,'COLD','LOG_DISPATCH','change_status'),(1113,'2019-06-04 19:45:11.499186','310c',19,1,'COLD','LOG_DISPATCH','change_status'),(1114,'2019-06-04 19:45:11.863001','310c',18,1,'COLD','LOG_DISPATCH','change_status'),(1115,'2019-06-04 19:46:00.899082','312c',24,1,'None','LOG_OTHER','request_off'),(1116,'2019-06-04 19:46:00.908392','312c',24,1,'None','LOG_DISPATCH','dispatch_off'),(1117,'2019-06-04 19:46:08.924212','309c',20,1,'None','LOG_DISPATCH','air_out/dispatch'),(1118,'2019-06-04 19:46:08.930735','311c',24,1,'COLD','LOG_DISPATCH','dispatch_on'),(1119,'2019-06-04 19:46:19.885371','312c',-1,-1,'None','LOG_OTHER','check_out'),(1120,'2019-06-04 19:46:28.011739','310c',18,1,'None','LOG_OTHER','request_off'),(1121,'2019-06-04 19:46:28.018000','310c',18,1,'None','LOG_DISPATCH','dispatch_off'),(1122,'2019-06-04 19:46:28.021093','309c',20,1,'COLD','LOG_DISPATCH','dispatch_on'),(1123,'2019-06-04 19:46:30.047914','311c',24,1,'None','LOG_OTHER','request_off'),(1124,'2019-06-04 19:46:30.051064','311c',24,1,'None','LOG_DISPATCH','dispatch_off'),(1125,'2019-06-04 19:46:30.746700','309c',20,1,'None','LOG_OTHER','request_off'),(1126,'2019-06-04 19:46:30.792344','309c',20,1,'None','LOG_DISPATCH','dispatch_off'),(1127,'2019-06-04 19:46:35.712335','310c',-1,-1,'None','LOG_OTHER','check_out'),(1128,'2019-06-04 19:46:36.251246','311c',-1,-1,'None','LOG_OTHER','check_out'),(1129,'2019-06-04 19:47:16.261850','310c',0,0,'HOT','LOG_OTHER','record'),(1130,'2019-06-04 19:47:46.321054','311c',0,0,'HOT','LOG_OTHER','record'),(1131,'2019-06-04 19:48:11.156309','309c',0,0,'HOT','LOG_OTHER','record'),(1132,'2019-06-04 19:48:11.165550','309c',0,0,'HOT','LOG_OTHER','record'),(1133,'2019-06-04 19:52:00.864294','309c',-1,-1,'None','LOG_OTHER','check_out');
+/*!40000 ALTER TABLE `Logger_runlog` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2019-06-04 20:01:43

@@ -49,7 +49,7 @@ def getFieldJson(jsons):
     dict = {}
     dict["message"] = "OK"
     dict["result"] = res
-    print("dict {}".format(dict))
+    #print("dict {}".format(dict))
     ret = json.dumps(dict)
 
     return ret
@@ -59,7 +59,13 @@ def changeTemper(mode,temper,speed):
     else:
         flag = -1
     speed = speed+1
-    temper -= 0.5 * speed / 60  # dropTemper()
+    if speed == 1:
+        temper -= 0.333333333/60
+    elif speed == 2:
+        temper -= 0.5/60
+    else:
+        temper -= 1.0/60
+    #temper -= 0.5 * speed / 60  # dropTemper()
     return temper
 
 
@@ -79,7 +85,7 @@ class MainMachine:
         self.cur_run = 0
         self.simulator = None
         self.logger = Logger()
-        self.maxserving = 2
+        self.maxserving = 3
     def changeFee(self,speed, fee):
         if speed == 0:
             tmp = float(self.low_speed_fee) / 60
@@ -243,6 +249,9 @@ def openMainMachine(request):
     global MainStatus
     global RoomIdListSetting
     print("MainMachine open")
+    with open("Logger/rdr.txt","w") as f:
+        f.write("0")
+        f.close()
     MainM = MainMachine()
     MainM.status= MainStatus["open"]
     RoomStatusDao.objects.all().delete()

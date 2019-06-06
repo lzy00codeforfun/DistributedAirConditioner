@@ -41,7 +41,7 @@ def getFieldJson_single_room(jsons):
         fee.append(settings['high_speed_fee'])
     jsons = json.loads(jsons)
     jsons = jsons[0]
-    print(jsons)
+    #print(jsons)
     js = jsons
     tmp = js["fields"]
     tmp.pop("time")
@@ -66,7 +66,7 @@ def getFieldJson_single_room(jsons):
 
 MainStatus = {"open":1,"init_param":2,"run":3,"close":4}
 RoomStatus = {"unregister":1,"registed":2,"waiting":"3","serving":4,"done":5}
-maxserving = 2
+maxserving = 3
 
 def GetNowTime():
     return time.time()
@@ -146,6 +146,7 @@ def RequestUpdateSpeed(request):
     global maxserving
     room = RoomStatusDao.objects.get(room_id=request.GET.get("room_id"))
     room.speed = request.GET.get("speed")
+    cur_speed = request.GET.get("speed")
     if room.status == RoomStatus["done"]:
         room.save()
     elif room.status == RoomStatus["serving"]:
@@ -153,7 +154,7 @@ def RequestUpdateSpeed(request):
         room.save()
         WaitingRoom = RoomStatusDao.objects.filter(status=RoomStatus["waiting"]).order_by("speed", "time")
         if len(WaitingRoom) != 0:
-            if room.speed<WaitingRoom[0].speed or ( room.speed == WaitingRoom[0].speed and time.time()-WaitingRoom[0].time > 120 ):
+            if float(cur_speed)<WaitingRoom[0].speed or ( float(cur_speed) == WaitingRoom[0].speed and time.time()-WaitingRoom[0].time > 120 ):
                 WaitingRoom[0].status = 4
                # WaitingRoom[0].current_temper = changeTemper(WaitingRoom[0].mode, WaitingRoom[0].current_temper,
                #                                              WaitingRoom[0].speed)
